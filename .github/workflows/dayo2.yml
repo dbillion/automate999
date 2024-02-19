@@ -12,13 +12,22 @@ jobs:
           - name: Step two
             run: env | sort
       job2:
-          name: Second job
-          runs-on: windows-latest
-          steps:
-          - name: Step one
-            uses: actions/checkout@v2
-          - name: Step two
-            run: "Get-ChildItem Env: | Sort-Object Name"
+        name: Second job
+        runs-on: windows-latest
+        steps:
+        - name: Step one
+          uses: actions/checkout@v2
+          with:
+            persist-credentials: false
+            fetch-depth:  0
+        - name: Remove Zone.Identifier files
+          run: |
+            git config --global core.protectNTFS false
+            git rm --cached --ignore-unmatch ':Zone.Identifier'
+            git commit -m "Remove Zone.Identifier files"
+        - name: Step two
+          run: "Get-ChildItem Env: | Sort-Object Name"
+
 
 
 
